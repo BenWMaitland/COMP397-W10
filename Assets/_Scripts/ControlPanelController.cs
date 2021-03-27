@@ -35,6 +35,8 @@ public class ControlPanelController : MonoBehaviour
         rectTransform = GetComponent<RectTransform>();
         rectTransform.anchoredPosition = offScreenPosition;
         timer = 0.0f;
+
+        LoadFromPlayerPrefs();
     }
 
     // Update is called once per frame
@@ -107,8 +109,11 @@ public class ControlPanelController : MonoBehaviour
 
     public void OnLoadButtonPressed()
     {
+        LoadFromPlayerPrefs();
+
         player.controller.enabled = false;
         player.transform.position = sceneData.playerPosition;
+        player.transform.rotation = sceneData.playerRotation;
         player.controller.enabled = true;
 
         player.health = sceneData.playerHealth;
@@ -118,6 +123,46 @@ public class ControlPanelController : MonoBehaviour
     public void OnSaveButtonPressed()
     {
         sceneData.playerPosition = player.transform.position;
+        sceneData.playerRotation = player.transform.rotation;
         sceneData.playerHealth = player.health;
+
+        SavetoPlayerPrefs();
+    }
+
+    public void SavetoPlayerPrefs()
+    {
+        // serialized and save our data to player preferences dictionary / db
+        // PlayerPrefs.SetString("playerData", JsonUtility.ToJson(sceneData));
+
+        // what we may have to do
+        PlayerPrefs.SetFloat("playerTransformX", sceneData.playerPosition.x);
+        PlayerPrefs.SetFloat("playerTransformY", sceneData.playerPosition.y);
+        PlayerPrefs.SetFloat("playerTransformZ", sceneData.playerPosition.z);
+
+        PlayerPrefs.SetFloat("playerTransformX", sceneData.playerRotation.x);
+        PlayerPrefs.SetFloat("playerTransformY", sceneData.playerRotation.y);
+        PlayerPrefs.SetFloat("playerTransformZ", sceneData.playerRotation.z);
+        PlayerPrefs.SetFloat("playerTransformW", sceneData.playerRotation.w);
+
+        PlayerPrefs.SetInt("playerHealth", sceneData.playerHealth);
+    }
+
+    public void LoadFromPlayerPrefs()
+    {
+        // deserialize and load data from player preferences
+        // var sceneDataJSONString = PlayerPrefs.GetString("playerData");
+        // JsonUtility.FromJsonOverwrite(sceneDataJSONString, sceneData);
+
+        // what we may need to do
+        sceneData.playerPosition.x = PlayerPrefs.GetFloat("playerTransformX");
+        sceneData.playerPosition.y = PlayerPrefs.GetFloat("playerTransformY");
+        sceneData.playerPosition.z = PlayerPrefs.GetFloat("playerTransformZ");
+
+        sceneData.playerRotation.x = PlayerPrefs.GetFloat("playerTransformX");
+        sceneData.playerRotation.y = PlayerPrefs.GetFloat("playerTransformY");
+        sceneData.playerRotation.z = PlayerPrefs.GetFloat("playerTransformZ");
+        sceneData.playerRotation.w = PlayerPrefs.GetFloat("playerTransformW");
+
+        sceneData.playerHealth = PlayerPrefs.GetInt("playerHealth");
     }
 }
